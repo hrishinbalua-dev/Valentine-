@@ -136,12 +136,20 @@ let i = 0;
 
 /* NO CLICK — SIMPLE & RELIABLE */
 noBtn.addEventListener("click", () => {
-  // Move NO left or right safely
-  if (Math.random() > 0.5) {
-    noBtn.style.transform = "translateX(-60px)";
-  } else {
-    noBtn.style.transform = "translateX(60px)";
-  }
+  const container = document.querySelector(".buttons");
+  const cRect = container.getBoundingClientRect();
+  const bRect = noBtn.getBoundingClientRect();
+
+  // Safe random X (inside container)
+  const maxX = cRect.width - bRect.width;
+  const randomX = Math.random() * maxX;
+
+  // Small random Y jump (fun but safe)
+  const randomY = Math.random() * 30;
+
+  noBtn.style.position = "absolute";
+  noBtn.style.left = randomX + "px";
+  noBtn.style.bottom = randomY + "px";
 
   msg.textContent = messages[i++ % messages.length];
 
