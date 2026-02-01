@@ -37,7 +37,7 @@ h1 {
 
 .buttons {
   position: relative;
-  height: 120px;
+  height: 140px;
   margin-top: 30px;
 }
 
@@ -57,7 +57,7 @@ button {
   left: 50%;
   transform: translateX(-50%);
   bottom: 0;
-  z-index: 2;
+  z-index: 10;
 }
 
 #no {
@@ -65,7 +65,7 @@ button {
   color: black;
   left: 10%;
   bottom: 0;
-  z-index: 1;
+  z-index: 5;
 }
 
 #msg {
@@ -82,7 +82,7 @@ button {
 <div class="card" id="card">
   <h1>💘 Will you be my Valentine? 💘</h1>
 
-  <div class="buttons">
+  <div class="buttons" id="btnBox">
     <button id="yes">YES ✨</button>
     <button id="no">NO</button>
   </div>
@@ -90,33 +90,66 @@ button {
   <div id="msg">💖 Everyone knows the answer</div>
 </div>
 
-<!-- CONFETTI LIB -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const msg = document.getElementById("msg");
+const box = document.getElementById("btnBox");
 
 const messages = [
   "😂 Nice try, press NO again",
   "😏 You can’t escape",
   "🙈 Why are you lying?",
-  "😜 Try again",
+  "😜 Still NO?",
   "💖 We both know the truth",
-  "🤣 This is fun, right?"
+  "🤣 You're enjoying this, right?"
 ];
 
 let msgIndex = 0;
 
+function moveNoSafely() {
+  const boxRect = box.getBoundingClientRect();
+  const yesRect = yesBtn.getBoundingClientRect();
+  const noRect = noBtn.getBoundingClientRect();
+
+  let x, y, safe;
+
+  do {
+    safe = true;
+
+    x = Math.random() * (boxRect.width - noRect.width);
+    y = Math.random() * (boxRect.height - noRect.height - 20);
+
+    const futureNo = {
+      left: boxRect.left + x,
+      right: boxRect.left + x + noRect.width,
+      top: boxRect.top + y,
+      bottom: boxRect.top + y + noRect.height
+    };
+
+    // Check overlap with YES
+    if (
+      futureNo.right > yesRect.left &&
+      futureNo.left < yesRect.right &&
+      futureNo.bottom > yesRect.top &&
+      futureNo.top < yesRect.bottom
+    ) {
+      safe = false;
+    }
+
+  } while (!safe);
+
+  noBtn.style.left = x + "px";
+  noBtn.style.bottom = "auto";
+  noBtn.style.top = y + "px";
+}
+
 noBtn.addEventListener("click", () => {
-  if (navigator.vibrate) navigator.vibrate(100);
+  if (navigator.vibrate) navigator.vibrate(120);
 
-  const x = Math.random() * 60;
-  const y = Math.random() * 60;
-
-  noBtn.style.left = x + "%";
-  noBtn.style.bottom = y + "%";
+  moveNoSafely();
 
   msg.textContent = messages[msgIndex];
   msgIndex = (msgIndex + 1) % messages.length;
@@ -155,8 +188,8 @@ yesBtn.addEventListener("click", () => {
   `;
 
   confetti({
-    particleCount: 200,
-    spread: 100,
+    particleCount: 250,
+    spread: 120,
     origin: { y: 0.6 }
   });
 });
