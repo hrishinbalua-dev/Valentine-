@@ -136,7 +136,15 @@ let i = 0;
 
 /* NO CLICK — SIMPLE & RELIABLE */
 noBtn.addEventListener("click", () => {
+  // Move NO left or right safely
+  if (Math.random() > 0.5) {
+    noBtn.style.transform = "translateX(-60px)";
+  } else {
+    noBtn.style.transform = "translateX(60px)";
+  }
+
   msg.textContent = messages[i++ % messages.length];
+
   if (navigator.vibrate) navigator.vibrate(80);
 });
 
