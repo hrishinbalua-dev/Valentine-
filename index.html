@@ -9,7 +9,7 @@
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: Poppins, Arial, sans-serif;
 }
 
 body{
@@ -27,7 +27,7 @@ body{
   padding:25px;
   border-radius:20px;
   width:90%;
-  max-width:350px;
+  max-width:360px;
   text-align:center;
   box-shadow:0 10px 30px rgba(0,0,0,0.25);
 }
@@ -57,18 +57,20 @@ button{
   left:50%;
   transform:translateX(-50%);
   bottom:0;
-  transition:transform 0.3s;
+  z-index:2;
 }
 
 #no{
   background:#ccc;
   color:#333;
   bottom:0;
+  z-index:1;
 }
 
 #noMessage{
-  display:none;
+  display:block;
   margin-top:15px;
+  min-height:22px;
   color:#ff4d6d;
   font-size:15px;
   font-weight:500;
@@ -120,26 +122,33 @@ const messages = [
   "💗 Okay okay… YES?"
 ];
 
+// Initial NO position (left side)
+noBtn.style.left = "10px";
+
 function moveNo(){
   noCount++;
 
-  const boxRect = box.getBoundingClientRect();
-  const yesRect = yesBtn.getBoundingClientRect();
+  const boxWidth = box.offsetWidth;
+  const yesCenter = boxWidth / 2;
+  const safeZone = 80; // area NO cannot enter
 
-  let x, safe=false;
+  let x;
 
-  while(!safe){
-    x = Math.random() * (boxRect.width - 80);
-    const distance = Math.abs((boxRect.left + x) - yesRect.left);
-    if(distance > 120) safe=true;
+  // Decide LEFT or RIGHT side, never middle
+  if(Math.random() < 0.5){
+    // LEFT side
+    x = Math.random() * (yesCenter - safeZone);
+  } else {
+    // RIGHT side
+    x = yesCenter + safeZone + Math.random() * (boxWidth - yesCenter - safeZone - 70);
   }
 
-  noBtn.style.left = x + "px";
+  noBtn.style.left = `${x}px`;
 
-  msg.style.display = "block";
+  // Show message
   msg.textContent = messages[Math.min(noCount-1, messages.length-1)];
 
-  // After many NOs, YES grows 😏
+  // Make YES slightly bigger after many NOs 😏
   if(noCount >= 6){
     yesBtn.style.transform = "translateX(-50%) scale(1.25)";
   }
@@ -152,7 +161,7 @@ noBtn.addEventListener("touchstart", (e)=>{
 });
 noBtn.addEventListener("mouseenter", moveNo);
 
-// YES CLICK
+// YES click
 yesBtn.addEventListener("click", ()=>{
   card.innerHTML = `
     <h2>💖 YAYYYY 💖</h2>
