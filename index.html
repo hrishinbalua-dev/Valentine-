@@ -9,7 +9,7 @@
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color: transparent;
-  font-family: Poppins, Arial, sans-serif;
+  font-family:Poppins, Arial, sans-serif;
 }
 
 body{
@@ -29,7 +29,7 @@ body{
   width:90%;
   max-width:360px;
   text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
 h2{
@@ -49,6 +49,7 @@ button{
   border-radius:30px;
   cursor:pointer;
   position:absolute;
+  user-select:none;
 }
 
 #yes{
@@ -58,6 +59,7 @@ button{
   transform:translateX(-50%);
   bottom:0;
   z-index:2;
+  transition:transform 0.3s;
 }
 
 #no{
@@ -68,7 +70,6 @@ button{
 }
 
 #noMessage{
-  display:block;
   margin-top:15px;
   min-height:22px;
   color:#ff4d6d;
@@ -112,54 +113,75 @@ const msg = document.getElementById("noMessage");
 const card = document.querySelector(".card");
 
 let noCount = 0;
+let moving = false;
 
+// 🔥 MANY teasing messages
 const messages = [
   "😜 Press NO again",
-  "😝 Try again!",
-  "😆 Almost YES!",
-  "🙈 NO is shy",
-  "😂 Still pressing NO?",
-  "💗 Okay okay… YES?"
+  "😝 Still choosing NO?",
+  "😆 Almost clicked YES!",
+  "🙈 NO is shy today",
+  "😂 You’re enjoying this, right?",
+  "😏 Come on…",
+  "🤭 Just one YES?",
+  "💗 Everyone knows the answer",
+  "🥺 Stop teasing me",
+  "😍 Okay okay… YES?"
 ];
 
-// Initial NO position (left side)
+// Initial NO position
 noBtn.style.left = "10px";
 
-function moveNo(){
+function moveNo(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  if(moving) return;
+  moving = true;
+
   noCount++;
+
+  // 📳 VIBRATION on NO tap
+  if (navigator.vibrate) {
+    navigator.vibrate([40, 20, 40]);
+  }
+
+  // Temporarily disable YES to prevent accidental press
+  yesBtn.style.pointerEvents = "none";
 
   const boxWidth = box.offsetWidth;
   const yesCenter = boxWidth / 2;
-  const safeZone = 80; // area NO cannot enter
+  const safeGap = 90;
 
   let x;
 
-  // Decide LEFT or RIGHT side, never middle
+  // Keep NO only left or right — never near YES
   if(Math.random() < 0.5){
-    // LEFT side
-    x = Math.random() * (yesCenter - safeZone);
+    x = Math.random() * (yesCenter - safeGap);
   } else {
-    // RIGHT side
-    x = yesCenter + safeZone + Math.random() * (boxWidth - yesCenter - safeZone - 70);
+    x = yesCenter + safeGap +
+        Math.random() * (boxWidth - yesCenter - safeGap - 70);
   }
 
-  noBtn.style.left = `${x}px`;
+  noBtn.style.left = x + "px";
 
-  // Show message
-  msg.textContent = messages[Math.min(noCount-1, messages.length-1)];
+  // 💬 Update message every time
+  msg.textContent = messages[Math.min(noCount - 1, messages.length - 1)];
 
-  // Make YES slightly bigger after many NOs 😏
+  // Grow YES slowly after many NOs 😏
   if(noCount >= 6){
     yesBtn.style.transform = "translateX(-50%) scale(1.25)";
   }
+
+  setTimeout(()=>{
+    yesBtn.style.pointerEvents = "auto";
+    moving = false;
+  },150);
 }
 
-// Mobile + desktop
-noBtn.addEventListener("touchstart", (e)=>{
-  e.preventDefault();
-  moveNo();
-});
-noBtn.addEventListener("mouseenter", moveNo);
+// Mobile-first events
+noBtn.addEventListener("touchstart", moveNo, { passive:false });
+noBtn.addEventListener("mousedown", moveNo);
 
 // YES click
 yesBtn.addEventListener("click", ()=>{
@@ -174,7 +196,7 @@ yesBtn.addEventListener("click", ()=>{
 });
 
 function startConfetti(){
-  for(let i=0;i<80;i++){
+  for(let i=0;i<90;i++){
     const c=document.createElement("div");
     c.className="confetti";
     c.style.left=Math.random()*100+"vw";
