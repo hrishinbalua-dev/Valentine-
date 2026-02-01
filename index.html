@@ -147,14 +147,13 @@ h1 {
     <p>Party Time 😍</p>
 
     <div class="gifts">
-      <video 
+<video 
   id="celebrateVideo"
   src="maza_aa_gaya.mp4"
-  autoplay
-  muted
   loop
   playsinline
-  controls>
+  controls
+  style="width:90%; border-radius:18px;">
 </video>
 
       <img src="18.gif">
@@ -210,8 +209,9 @@ yesBtn.addEventListener("click", () => {
 
   const video = document.getElementById("celebrateVideo");
   if (video) {
-    video.muted = false;   // 🔊 UNMUTE
-    video.play();         // ▶️ PLAY WITH SOUND
+    video.currentTime = 0;
+    video.muted = false;
+    video.play();
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
