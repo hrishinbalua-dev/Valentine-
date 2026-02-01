@@ -8,12 +8,14 @@
 <style>
 * {
   box-sizing: border-box;
-  font-family: Poppins, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
   margin: 0;
   background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .page {
@@ -31,37 +33,55 @@ body {
   box-shadow: 0 15px 35px rgba(0,0,0,.2);
 }
 
+/* QUESTION */
+h1 {
+  color: #ff4d6d;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
 /* BUTTON AREA */
 .buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  position: relative;
+  height: 120px;
+  margin-bottom: 10px;
 }
 
-/* BUTTONS */
-button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 30px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
+/* YES BUTTON */
 #yes {
   background: #ff4d6d;
   color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 5;
 }
 
+/* NO BUTTON */
 #no {
   background: #ccc;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  position: absolute;
+  left: 10%;
+  bottom: 0;
+  z-index: 1;
 }
 
 /* MESSAGE */
 #msg {
   margin-top: 15px;
   color: #ff4d6d;
+  font-size: 14px;
   min-height: 20px;
 }
 
@@ -69,7 +89,12 @@ button {
 #yesScreen {
   display: none;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 60px;
+}
+
+#yesScreen h2,
+#yesScreen p {
+  color: white;
 }
 
 .gifts {
@@ -77,11 +102,17 @@ button {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  align-items: center;
 }
 
 video, img {
-  width: 100%;
+  width: 90%;
   border-radius: 18px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  h1 { font-size: 20px; }
 }
 </style>
 </head>
@@ -92,7 +123,7 @@ video, img {
 
   <!-- MAIN CARD -->
   <div class="card" id="mainCard">
-    <h2>💘 Will you be my Valentine? 💘</h2>
+    <h1>💘 Will you be my Valentine? 💘</h1>
 
     <div class="buttons">
       <button id="no">NO</button>
@@ -106,6 +137,7 @@ video, img {
   <div id="yesScreen">
     <h2>💖 SHE SAID YES 💖</h2>
     <p>Best moment ever 😍</p>
+    <p>Party Time 😍</p>
 
     <div class="gifts">
       <video id="celebrateVideo" src="maza_aa_gaya.mp4" controls playsinline></video>
@@ -118,14 +150,15 @@ video, img {
 </div>
 
 <script>
-const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
 const msg = document.getElementById("msg");
 const card = document.getElementById("mainCard");
 const yesScreen = document.getElementById("yesScreen");
+const buttons = document.querySelector(".buttons");
 
 const messages = [
-  "😂 Nice try",
+  "😂 Nice try, press NO again",
   "😜 Still no?",
   "🤭 Almost YES",
   "😏 You know it",
@@ -134,33 +167,31 @@ const messages = [
 
 let i = 0;
 
-/* NO CLICK — SIMPLE & RELIABLE */
+/* 🔥 RANDOM + SAFE NO MOVEMENT */
 noBtn.addEventListener("click", () => {
-  const container = document.querySelector(".buttons");
-  const cRect = container.getBoundingClientRect();
-  const noRect = noBtn.getBoundingClientRect();
-  const yesRect = yesBtn.getBoundingClientRect();
+  const btnBox = buttons.getBoundingClientRect();
+  const noBox = noBtn.getBoundingClientRect();
+  const yesBox = yesBtn.getBoundingClientRect();
 
   let x, y, safe = false;
 
   while (!safe) {
-    // random X inside container
-    x = Math.random() * (cRect.width - noRect.width);
-    y = Math.random() * 30; // small vertical move
+    x = Math.random() * (btnBox.width - noBox.width);
+    y = Math.random() * 30;
 
     const futureNo = {
-      left: cRect.left + x,
-      right: cRect.left + x + noRect.width,
-      top: cRect.bottom - y - noRect.height,
-      bottom: cRect.bottom - y
+      left: btnBox.left + x,
+      right: btnBox.left + x + noBox.width,
+      top: btnBox.bottom - y - noBox.height,
+      bottom: btnBox.bottom - y
     };
 
-    // check overlap with YES
+    // Check overlap with YES
     if (
-      futureNo.right < yesRect.left ||
-      futureNo.left > yesRect.right ||
-      futureNo.bottom < yesRect.top ||
-      futureNo.top > yesRect.bottom
+      futureNo.right < yesBox.left ||
+      futureNo.left > yesBox.right ||
+      futureNo.bottom < yesBox.top ||
+      futureNo.top > yesBox.bottom
     ) {
       safe = true;
     }
@@ -170,10 +201,11 @@ noBtn.addEventListener("click", () => {
   noBtn.style.bottom = y + "px";
 
   msg.textContent = messages[i++ % messages.length];
+
   if (navigator.vibrate) navigator.vibrate(80);
 });
 
-/* YES CLICK — ALWAYS WORKS */
+/* YES CLICK */
 yesBtn.addEventListener("click", () => {
   card.style.display = "none";
   yesScreen.style.display = "block";
