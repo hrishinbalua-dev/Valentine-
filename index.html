@@ -148,13 +148,14 @@ h1 {
 
     <div class="gifts">
       <video 
-        src="maza_aa_gaya.mp4"
-        autoplay
-        muted
-        loop
-        playsinline
-        controls>
-      </video>
+  id="celebrateVideo"
+  src="maza_aa_gaya.mp4"
+  autoplay
+  muted
+  loop
+  playsinline
+  controls>
+</video>
 
       <img src="18.gif">
       <img src="source.gif">
@@ -207,6 +208,14 @@ yesBtn.addEventListener("click", () => {
   card.style.display = "none";
   yesScreen.style.display = "block";
 
+  const video = document.getElementById("celebrateVideo");
+  if (video) {
+    video.muted = false;   // 🔊 UNMUTE
+    video.play();         // ▶️ PLAY WITH SOUND
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
   // 👇 force scroll activation
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
