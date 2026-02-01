@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Will you be my Valentine 💖</title>
 
 <style>
@@ -19,7 +18,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* CARD */
@@ -47,7 +46,7 @@ h1 {
   height: 120px;
 }
 
-/* YES BUTTON */
+/* YES BUTTON (LOCKED CENTER) */
 #yes {
   background: #ff4d6d;
   color: white;
@@ -60,7 +59,7 @@ h1 {
   left: 50%;
   bottom: 10px;
   transform: translateX(-50%);
-  z-index: 2;
+  z-index: 5;
 }
 
 /* NO BUTTON */
@@ -113,7 +112,7 @@ h1 {
   border-radius: 18px;
 }
 
-/* MOBILE FIX */
+/* MOBILE */
 @media (max-width: 600px) {
   h1 {
     font-size: 20px;
@@ -141,19 +140,18 @@ h1 {
   <h2>💖 SHE SAID YES 💖</h2>
   <p>Best moment ever 😍</p>
   <p>Party Time 😍</p>
+
   <div class="gifts">
     <img src="18.gif" alt="Gift 1">
     <img src="source.gif" alt="Gift 2">
     <img src="e454c6822f8d5b4acd623c533304885c.gif" alt="Gift 3">
   </div>
-
-
 </div>
 
 <script>
 const noBtn = document.getElementById("no");
-const msg = document.getElementById("msg");
 const yesBtn = document.getElementById("yes");
+const msg = document.getElementById("msg");
 const card = document.getElementById("mainCard");
 const yesScreen = document.getElementById("yesScreen");
 
@@ -167,13 +165,21 @@ const messages = [
 
 let count = 0;
 
-/* MOVE NO BUTTON */
+/* MOVE NO BUTTON — SAFE ZONE ONLY */
 noBtn.addEventListener("click", () => {
-  const maxX = 220;
-  const maxY = 60;
+  const buttonAreaWidth = 320;
+  const buttonAreaHeight = 70;
 
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+  let x;
+
+  // LEFT or RIGHT only (never center)
+  if (Math.random() > 0.5) {
+    x = Math.random() * 60;          // LEFT SIDE
+  } else {
+    x = 220 + Math.random() * 40;   // RIGHT SIDE
+  }
+
+  const y = Math.random() * buttonAreaHeight;
 
   noBtn.style.left = x + "px";
   noBtn.style.bottom = y + "px";
@@ -181,7 +187,6 @@ noBtn.addEventListener("click", () => {
   msg.textContent = messages[count % messages.length];
   count++;
 
-  /* VIBRATION */
   if (navigator.vibrate) {
     navigator.vibrate(80);
   }
