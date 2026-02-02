@@ -17,7 +17,7 @@ body {
   overflow-x: hidden;
 }
 
-/* PAGE WRAPPER */
+/* PAGE */
 .page {
   padding: 40px 16px 80px;
 }
@@ -152,7 +152,8 @@ video {
       <video id="celebrateVideo"
         src="maza_aa_gaya.mp4"
         controls
-        playsinline loop >
+        playsinline
+        loop>
       </video>
 
       <img src="18.gif" alt="Gift 1">
@@ -180,8 +181,10 @@ const messages = [
 ];
 
 let i = 0;
+let lastX = null;
+let lastY = null;
 
-/* 🔥 RANDOM SAFE NO MOVEMENT */
+/* 🔥 RANDOM + FAR NO MOVEMENT */
 noBtn.addEventListener("click", () => {
   const btnBox = buttons.getBoundingClientRect();
   const noBox = noBtn.getBoundingClientRect();
@@ -193,6 +196,13 @@ noBtn.addEventListener("click", () => {
     x = Math.random() * (btnBox.width - noBox.width);
     y = Math.random() * 40;
 
+    // Force distance from last position
+    if (lastX !== null) {
+      const dx = Math.abs(x - lastX);
+      const dy = Math.abs(y - lastY);
+      if (dx < 100 && dy < 25) continue;
+    }
+
     const futureNo = {
       left: btnBox.left + x,
       right: btnBox.left + x + noBox.width,
@@ -200,6 +210,7 @@ noBtn.addEventListener("click", () => {
       bottom: btnBox.bottom - y
     };
 
+    // Avoid YES button
     if (
       futureNo.right < yesBox.left ||
       futureNo.left > yesBox.right ||
@@ -212,6 +223,9 @@ noBtn.addEventListener("click", () => {
 
   noBtn.style.left = x + "px";
   noBtn.style.bottom = y + "px";
+
+  lastX = x;
+  lastY = y;
 
   msg.textContent = messages[i++ % messages.length];
 
