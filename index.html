@@ -15,11 +15,11 @@ body {
   margin: 0;
   background: linear-gradient(135deg,#ff9a9e,#fad0c4);
   overflow-x: hidden;
-  overflow-y: auto;
 }
 
+/* PAGE WRAPPER */
 .page {
-  padding: 40px 16px;
+  padding: 40px 16px 80px;
 }
 
 /* CARD */
@@ -44,7 +44,6 @@ h1 {
 .buttons {
   position: relative;
   height: 120px;
-  margin-bottom: 10px;
 }
 
 /* YES BUTTON */
@@ -97,6 +96,7 @@ h1 {
   color: white;
 }
 
+/* GIFS & VIDEO */
 .gifts {
   margin-top: 20px;
   display: flex;
@@ -106,22 +106,24 @@ h1 {
 }
 
 video, img {
-  width: 90%;
+  width: 100%;
+  max-width: 360px;
   border-radius: 18px;
+  display: block;
+}
+
+/* VIDEO FIX */
+video {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: black;
 }
 
 /* MOBILE */
 @media (max-width: 600px) {
   h1 { font-size: 20px; }
 }
-video {
-  width: 100%;
-  max-width: 360px;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: 18px;
-  background: black;
-}</style>
+</style>
 </head>
 
 <body>
@@ -148,13 +150,14 @@ video {
 
     <div class="gifts">
       <video id="celebrateVideo"
-  src="maza_aa_gaya.mp4"
-  controls
-  playsinline>
+        src="maza_aa_gaya.mp4"
+        controls
+        playsinline>
       </video>
-      <img src="18.gif">
-      <img src="source.gif">
-      <img src="e454c6822f8d5b4acd623c533304885c.gif">
+
+      <img src="18.gif" alt="Gift 1">
+      <img src="source.gif" alt="Gift 2">
+      <img src="e454c6822f8d5b4acd623c533304885c.gif" alt="Gift 3">
     </div>
   </div>
 
@@ -178,7 +181,7 @@ const messages = [
 
 let i = 0;
 
-/* 🔥 RANDOM + SAFE NO MOVEMENT */
+/* 🔥 RANDOM SAFE NO MOVEMENT */
 noBtn.addEventListener("click", () => {
   const btnBox = buttons.getBoundingClientRect();
   const noBox = noBtn.getBoundingClientRect();
@@ -188,7 +191,7 @@ noBtn.addEventListener("click", () => {
 
   while (!safe) {
     x = Math.random() * (btnBox.width - noBox.width);
-    y = Math.random() * 30;
+    y = Math.random() * 40;
 
     const futureNo = {
       left: btnBox.left + x,
@@ -197,7 +200,6 @@ noBtn.addEventListener("click", () => {
       bottom: btnBox.bottom - y
     };
 
-    // Check overlap with YES
     if (
       futureNo.right < yesBox.left ||
       futureNo.left > yesBox.right ||
@@ -216,28 +218,19 @@ noBtn.addEventListener("click", () => {
   if (navigator.vibrate) navigator.vibrate(80);
 });
 
-/* YES CLICK */
+/* ❤️ YES CLICK */
 yesBtn.addEventListener("click", () => {
   card.style.display = "none";
   yesScreen.style.display = "block";
 
-  const video = document.getElementById("celebrateVideo");
-  if (video) {
-    video.muted = false;   // SOUND ON
-    video.currentTime = 0;
-    video.play().catch(err => {
-      console.log("Video play blocked:", err);
-    });
-  }
-});
+  yesScreen.scrollIntoView({ behavior: "smooth" });
 
   const video = document.getElementById("celebrateVideo");
   if (video) {
+    video.muted = false;
     video.currentTime = 0;
     video.play().catch(() => {});
   }
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 </script>
 
