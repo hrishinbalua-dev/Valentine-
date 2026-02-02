@@ -114,7 +114,14 @@ video, img {
 @media (max-width: 600px) {
   h1 { font-size: 20px; }
 }
-</style>
+video {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 18px;
+  background: black;
+}</style>
 </head>
 
 <body>
@@ -140,7 +147,11 @@ video, img {
     <p>Party Time 😍</p>
 
     <div class="gifts">
-      <video id="celebrateVideo" src="maza_aa_gaya.mp4" controls playsinline></video>
+      <video id="celebrateVideo"
+  src="maza_aa_gaya.mp4"
+  controls
+  playsinline>
+      </video>
       <img src="18.gif">
       <img src="source.gif">
       <img src="e454c6822f8d5b4acd623c533304885c.gif">
@@ -209,6 +220,16 @@ noBtn.addEventListener("click", () => {
 yesBtn.addEventListener("click", () => {
   card.style.display = "none";
   yesScreen.style.display = "block";
+
+  const video = document.getElementById("celebrateVideo");
+  if (video) {
+    video.muted = false;   // SOUND ON
+    video.currentTime = 0;
+    video.play().catch(err => {
+      console.log("Video play blocked:", err);
+    });
+  }
+});
 
   const video = document.getElementById("celebrateVideo");
   if (video) {
