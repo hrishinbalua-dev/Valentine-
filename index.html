@@ -132,15 +132,13 @@ video {
   top: -10px;
   font-size: 14px;
   pointer-events: none;
-  animation: fall linear infinite;
-  opacity: 0.8;
+  opacity: 0.85;
+  animation: fall linear forwards;
+  z-index: 9999;
 }
 
 @keyframes fall {
-  0% {
-    transform: translateY(-10px) rotate(0deg);
-  }
-  100% {
+  to {
     transform: translateY(110vh) rotate(360deg);
   }
 }
@@ -209,8 +207,9 @@ const messages = [
 let i = 0;
 let lastX = null;
 let lastY = null;
+let confettiInterval = null;
 
-/* 🔥 NO MOVES FAR */
+/* 🔥 NO MOVES FAR & RANDOM */
 noBtn.addEventListener("click", () => {
   const btnBox = buttons.getBoundingClientRect();
   const noBox = noBtn.getBoundingClientRect();
@@ -223,9 +222,7 @@ noBtn.addEventListener("click", () => {
     y = Math.random() * 40;
 
     if (lastX !== null) {
-      const dx = Math.abs(x - lastX);
-      const dy = Math.abs(y - lastY);
-      if (dx < 120 && dy < 30) continue;
+      if (Math.abs(x - lastX) < 120 && Math.abs(y - lastY) < 30) continue;
     }
 
     const futureNo = {
@@ -256,18 +253,22 @@ noBtn.addEventListener("click", () => {
   if (navigator.vibrate) navigator.vibrate(80);
 });
 
-/* 💖 CONFETTI HEART LOOP */
+/* 💖 CONFETTI LOOP */
 function startConfetti() {
-  setInterval(() => {
+  if (confettiInterval) return;
+
+  const colors = ["💖","💗","💘"];
+
+  confettiInterval = setInterval(() => {
     const heart = document.createElement("div");
     heart.className = "confetti";
-    heart.textContent = "💖";
+    heart.textContent = colors[Math.floor(Math.random()*colors.length)];
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.animationDuration = (3 + Math.random() * 3) + "s";
-    document.body.appendChild(heart);
 
+    document.body.appendChild(heart);
     setTimeout(() => heart.remove(), 6000);
-  }, 350);
+  }, 400);
 }
 
 /* ❤️ YES CLICK */
@@ -278,7 +279,7 @@ yesBtn.addEventListener("click", () => {
   yesScreen.style.display = "block";
   yesScreen.scrollIntoView({ behavior: "smooth" });
 
-  if (navigator.vibrate) navigator.vibrate(300); // 🔥 longer vibration
+  if (navigator.vibrate) navigator.vibrate(300);
 
   startConfetti();
 
@@ -290,11 +291,24 @@ yesBtn.addEventListener("click", () => {
   }
 });
 
-/* ⬅ BACK BUTTON SUPPORT */
+/* ⬅ BACK BUTTON FIX */
 window.addEventListener("popstate", () => {
   yesScreen.style.display = "none";
   card.style.display = "block";
   window.scrollTo({ top: 0 });
+
+  const video = document.getElementById("celebrateVideo");
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (confettiInterval) {
+    clearInterval(confettiInterval);
+    confettiInterval = null;
+  }
+
+  document.querySelectorAll(".confetti").forEach(c => c.remove());
 });
 </script>
 
