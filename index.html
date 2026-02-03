@@ -126,26 +126,28 @@ video {
   background: black;
 }
 
-/* MOBILE */
-@media (max-width: 600px) {
-  h1 { font-size: 20px; }
-}
-
-/* 🎉 CONFETTI */
+/* 💖 CONFETTI HEARTS */
 .confetti {
   position: fixed;
   top: -10px;
-  width: 8px;
-  height: 8px;
+  font-size: 14px;
+  pointer-events: none;
+  animation: fall linear infinite;
   opacity: 0.8;
-  animation: fall linear forwards;
-  z-index: 9999;
 }
 
 @keyframes fall {
-  to {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  100% {
     transform: translateY(110vh) rotate(360deg);
   }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  h1 { font-size: 20px; }
 }
 </style>
 </head>
@@ -208,7 +210,7 @@ let i = 0;
 let lastX = null;
 let lastY = null;
 
-/* 🔥 RANDOM + FAR NO MOVEMENT */
+/* 🔥 NO MOVES FAR */
 noBtn.addEventListener("click", () => {
   const btnBox = buttons.getBoundingClientRect();
   const noBox = noBtn.getBoundingClientRect();
@@ -221,7 +223,9 @@ noBtn.addEventListener("click", () => {
     y = Math.random() * 40;
 
     if (lastX !== null) {
-      if (Math.abs(x - lastX) < 100 && Math.abs(y - lastY) < 25) continue;
+      const dx = Math.abs(x - lastX);
+      const dy = Math.abs(y - lastY);
+      if (dx < 120 && dy < 30) continue;
     }
 
     const futureNo = {
@@ -252,30 +256,29 @@ noBtn.addEventListener("click", () => {
   if (navigator.vibrate) navigator.vibrate(80);
 });
 
-/* 🎉 CONFETTI LOOP */
+/* 💖 CONFETTI HEART LOOP */
 function startConfetti() {
-  const colors = ["#ff4d6d", "#ffd166", "#06d6a0", "#118ab2", "#ef476f"];
-
   setInterval(() => {
-    for (let i = 0; i < 25; i++) {
-      const confetti = document.createElement("div");
-      confetti.className = "confetti";
-      confetti.style.left = Math.random() * 100 + "vw";
-      confetti.style.backgroundColor =
-        colors[Math.floor(Math.random() * colors.length)];
-      confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
+    const heart = document.createElement("div");
+    heart.className = "confetti";
+    heart.textContent = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (3 + Math.random() * 3) + "s";
+    document.body.appendChild(heart);
 
-      document.body.appendChild(confetti);
-      setTimeout(() => confetti.remove(), 4000);
-    }
-  }, 700);
+    setTimeout(() => heart.remove(), 6000);
+  }, 350);
 }
 
 /* ❤️ YES CLICK */
 yesBtn.addEventListener("click", () => {
+  history.pushState({ page: "yes" }, "", "#yes");
+
   card.style.display = "none";
   yesScreen.style.display = "block";
   yesScreen.scrollIntoView({ behavior: "smooth" });
+
+  if (navigator.vibrate) navigator.vibrate(300); // 🔥 longer vibration
 
   startConfetti();
 
@@ -285,6 +288,13 @@ yesBtn.addEventListener("click", () => {
     video.currentTime = 0;
     video.play().catch(() => {});
   }
+});
+
+/* ⬅ BACK BUTTON SUPPORT */
+window.addEventListener("popstate", () => {
+  yesScreen.style.display = "none";
+  card.style.display = "block";
+  window.scrollTo({ top: 0 });
 });
 </script>
 
