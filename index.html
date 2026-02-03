@@ -126,7 +126,7 @@ video {
   background: black;
 }
 
-/* 💖 CONFETTI HEARTS */
+/* 💖 CONFETTI */
 .confetti {
   position: fixed;
   top: -10px;
@@ -209,8 +209,8 @@ let lastX = null;
 let lastY = null;
 let confettiInterval = null;
 
-/* 🔥 NO MOVES FAR & RANDOM */
-noBtn.addEventListener("click", () => {
+/* 🏃 MOVE NO RANDOMLY (USED BY CLICK + HOVER) */
+function moveNoRandomly() {
   const btnBox = buttons.getBoundingClientRect();
   const noBox = noBtn.getBoundingClientRect();
   const yesBox = yesBtn.getBoundingClientRect();
@@ -244,28 +244,34 @@ noBtn.addEventListener("click", () => {
 
   noBtn.style.left = x + "px";
   noBtn.style.bottom = y + "px";
-
   lastX = x;
   lastY = y;
+}
 
+/* 📱 MOBILE TAP */
+noBtn.addEventListener("click", () => {
+  moveNoRandomly();
   msg.textContent = messages[i++ % messages.length];
-
   if (navigator.vibrate) navigator.vibrate(80);
 });
+
+/* 💻 DESKTOP HOVER */
+if (window.matchMedia("(hover: hover)").matches) {
+  noBtn.addEventListener("mouseenter", moveNoRandomly);
+}
 
 /* 💖 CONFETTI LOOP */
 function startConfetti() {
   if (confettiInterval) return;
 
-  const colors = ["💖","💗","💘"];
+  const hearts = ["💖","💗","💘"];
 
   confettiInterval = setInterval(() => {
     const heart = document.createElement("div");
     heart.className = "confetti";
-    heart.textContent = colors[Math.floor(Math.random()*colors.length)];
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.animationDuration = (3 + Math.random() * 3) + "s";
-
     document.body.appendChild(heart);
     setTimeout(() => heart.remove(), 6000);
   }, 400);
