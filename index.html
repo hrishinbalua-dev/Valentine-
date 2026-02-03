@@ -93,13 +93,13 @@ h1 {
 
 #yesScreen h2 {
   color: white;
-  font-size: 30px;   /* ⬅ Bigger heading */
+  font-size: 30px;
   margin-bottom: 12px;
 }
 
 #yesScreen p {
   color: white;
-  font-size: 18px;   /* ⬅ Bigger text */
+  font-size: 18px;
   margin-bottom: 10px;
 }
 
@@ -129,6 +129,23 @@ video {
 /* MOBILE */
 @media (max-width: 600px) {
   h1 { font-size: 20px; }
+}
+
+/* 🎉 CONFETTI */
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 8px;
+  height: 8px;
+  opacity: 0.8;
+  animation: fall linear forwards;
+  z-index: 9999;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+  }
 }
 </style>
 </head>
@@ -163,9 +180,9 @@ video {
         loop>
       </video>
 
-      <img src="18.gif" alt="Gift 1">
-      <img src="source.gif" alt="Gift 2">
-      <img src="e454c6822f8d5b4acd623c533304885c.gif" alt="Gift 3">
+      <img src="18.gif">
+      <img src="source.gif">
+      <img src="e454c6822f8d5b4acd623c533304885c.gif">
     </div>
   </div>
 
@@ -203,11 +220,8 @@ noBtn.addEventListener("click", () => {
     x = Math.random() * (btnBox.width - noBox.width);
     y = Math.random() * 40;
 
-    // Force distance from last position
     if (lastX !== null) {
-      const dx = Math.abs(x - lastX);
-      const dy = Math.abs(y - lastY);
-      if (dx < 100 && dy < 25) continue;
+      if (Math.abs(x - lastX) < 100 && Math.abs(y - lastY) < 25) continue;
     }
 
     const futureNo = {
@@ -217,7 +231,6 @@ noBtn.addEventListener("click", () => {
       bottom: btnBox.bottom - y
     };
 
-    // Avoid YES button
     if (
       futureNo.right < yesBox.left ||
       futureNo.left > yesBox.right ||
@@ -239,12 +252,32 @@ noBtn.addEventListener("click", () => {
   if (navigator.vibrate) navigator.vibrate(80);
 });
 
+/* 🎉 CONFETTI LOOP */
+function startConfetti() {
+  const colors = ["#ff4d6d", "#ffd166", "#06d6a0", "#118ab2", "#ef476f"];
+
+  setInterval(() => {
+    for (let i = 0; i < 25; i++) {
+      const confetti = document.createElement("div");
+      confetti.className = "confetti";
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.backgroundColor =
+        colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
+
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }
+  }, 700);
+}
+
 /* ❤️ YES CLICK */
 yesBtn.addEventListener("click", () => {
   card.style.display = "none";
   yesScreen.style.display = "block";
-
   yesScreen.scrollIntoView({ behavior: "smooth" });
+
+  startConfetti();
 
   const video = document.getElementById("celebrateVideo");
   if (video) {
